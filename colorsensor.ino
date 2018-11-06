@@ -13,8 +13,6 @@ void setup() {
   }
 }
 
-
-
 void loop() {
   uint16_t clear, red, green, blue;
   tcs.setInterrupt(false); // Turn on LED
