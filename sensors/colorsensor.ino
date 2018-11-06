@@ -1,12 +1,10 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 
+//For testing color sensor values
+
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
-//int redPin = 3;
-//int greenPin = 6;
-//int bluePin = 9;
-//byte gammatable[256];
 void setup() {
   Serial.begin(9600);
   if (tcs.begin()){
@@ -15,21 +13,7 @@ void setup() {
     Serial.println("Error: Did not find sensor");
        while(1); 
   }
-
-  //pinMode(redPin, OUTPUT);
-  //pinMode(greenPin, OUTPUT);
-  //pinMode(bluePin, OUTPUT);
-
-  /*for (int i=0; i<256; i++) {
-    float x = i;
-    x /= 255;
-    x = pow(x, 2.5);
-    x *= 255;
-    gammatable[i] = 255 - x; // Assuming RGB LED is anode, if cathode change to just x
-  } */
 }
-
-
 
 void loop() {
   uint16_t clear, red, green, blue;
@@ -65,10 +49,6 @@ void loop() {
   Serial.print("\t");
   Serial.print(material);
   Serial.println();
-
-  //analogWrite(redpin, gammatable[(int)r]);
-  //analogWrite(greenpin, gammatable[(int)g]);
-  //analogWrite(bluepin, gammatable[(int)b]);
 
 }
 String getMaterialType(int r, int g, int b){
