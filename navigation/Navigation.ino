@@ -64,7 +64,7 @@ void loop() {
     while (!enes.updateLocation());
 
     //Checks for obstacles and endpoint
-    if (readDistanceSensor(1) <= 350 || readDistanceSensor(2) <= 350){
+    if ((readDistanceSensor(1) <= 350 || readDistanceSensor(2) <= 350) && !isRockyTerrain()){
       deactivateMotors();
       Serial.println("Obstacle detected");
       goAround();
@@ -142,10 +142,18 @@ int readDistanceSensor(int d){
 }
 
 boolean obstacleDetected(){
+  if (isRockyTerrain()) return false;
   if (readDistanceSensor(1) > 300 && readDistanceSensor(2) > 300){
     return false;
   }
   return true;
+}
+
+boolean isRockyTerrain(){
+  if (enes.location.x <= 1.25){
+    return true;
+  }
+  return false;
 }
 
 double determineTheta(double x, double y, double x2, double y2){
