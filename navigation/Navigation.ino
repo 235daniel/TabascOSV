@@ -51,7 +51,7 @@ void loop() {
     
     //Moves forward until an object is detected or it reaches the endpoint
     while (!obstacleDetected() && ((abs(enes.location.x - enes.destination.x) > 0.15) || (abs(enes.location.y - enes.destination.y) > 0.15))){
-      moveForward(255);
+      moveForward(120);
       while (!enes.updateLocation());
       Serial.println("Updated location"); 
 
@@ -180,9 +180,9 @@ void fixAngle(){
   while (abs(enes.location.theta - determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y)) > 0.05) {
 
     if (turnDirection == 0){ //Right
-      turnRight(255);  
+      turnRight(80);  
     } else if (turnDirection == 1){ //Left
-      turnLeft(255);
+      turnLeft(80);
     }
 
     while (!enes.updateLocation());
@@ -211,16 +211,16 @@ void goAround(){
     //Turns until there is no longer an obstacle in the OSV's path
     while (readDistanceSensor(1) <= 450 || readDistanceSensor(2) <= 450){
       if (turnDirection == 1){
-        turnRight(255);
+        turnRight(80);
       } else {
-        turnLeft(255);
+        turnLeft(80);
       }
     }
     //tank.turnOffMotors();  
 
     timeCounter = millis() + 3000;
     while (millis() < timeCounter){
-      moveForward(255);
+      moveForward(120);
     }
     //tank.turnOffMotors();
     
