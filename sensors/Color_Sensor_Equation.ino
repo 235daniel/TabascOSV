@@ -2,9 +2,9 @@
 #include "Adafruit_TCS34725.h"
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
-double[] copper = {1,1,1};
-double[] steel = {255,255,255};
-double copperStDev = 150, steelStDev = 150; 
+double[] copper = {107.5,85.8,61.3};
+double[] steel = {82.1,94.9,74.8};
+double copperStDev = 4.5, steelStDev = 5.7; 
 
 void setup() {
   Serial.begin(9600);
