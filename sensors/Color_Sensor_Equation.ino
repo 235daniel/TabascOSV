@@ -2,8 +2,8 @@
 #include "Adafruit_TCS34725.h"
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
-double[] copper = {107.5,85.8,61.3};
-double[] steel = {82.1,94.9,74.8};
+double copper[3] = {107.5,85.8,61.3};
+double steel[3] = {82.1,94.9,74.8};
 double copperStDev = 4.5, steelStDev = 5.7; 
 
 void setup() {
@@ -58,13 +58,13 @@ String getMaterialType(int r, int g, int b){
   double steelDist = sqrt(pow(steel[0] - r, 2) + pow(steel[1] - g, 2) + pow(steel[2] - b, 2));
 
   if(copperDist < steelDist){
-    if(copperDist < 3*copperStDev){
+    if(copperDist < 2*copperStDev){
       return "Copper";
     }
     return "No Material";
   }
 
-  if(steelDist < 3*steelStDev){
+  if(steelDist < 2*steelStDev){
     return "Steel";
   }
 
