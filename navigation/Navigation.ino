@@ -19,7 +19,7 @@ int e1 = 10;
 int m1 = 9;
 //Motor2
 //e2 controls the speed of motor2
-int e2 = 5;
+int e2 = 6;
 //pin m2 controls motor2 HIGH/LOW to set a direction
 int m2 = 7;
 
