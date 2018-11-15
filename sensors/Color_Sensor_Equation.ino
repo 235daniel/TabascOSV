@@ -4,7 +4,8 @@
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 double copper[3] = {107.5,85.8,61.3};
 double steel[3] = {82.1,94.9,74.8};
-double copperStDev = 4.5, steelStDev = 5.7; 
+double darkSteel[3] = {96.4,89.4,68.8};
+double copperStDev = 4.5, steelStDev = 5.7, darkSteelStDev = 2.0;
 
 void setup() {
   Serial.begin(9600);
@@ -15,8 +16,6 @@ void setup() {
        while(1); 
   }
 }
-
-
 
 void loop() {
   uint16_t clear, red, green, blue;
@@ -56,8 +55,9 @@ void loop() {
 String getMaterialType(int r, int g, int b){
   double copperDist = sqrt(pow(copper[0] - r, 2) + pow(copper[1] - g, 2) + pow(copper[2] - b, 2));
   double steelDist = sqrt(pow(steel[0] - r, 2) + pow(steel[1] - g, 2) + pow(steel[2] - b, 2));
+  double darkSteelDist = sqrt(pow(darkSteel[0] - r, 2) + pow(darkSteel[1] - g, 2) + pow(darkSteel[2] - b, 2));
 
-  if(copperDist < steelDist){
+  if(copperDist < steelDist && copperDist < darkSteelDist){
     if(copperDist < 2*copperStDev){
       return "Copper";
     }
@@ -66,6 +66,10 @@ String getMaterialType(int r, int g, int b){
 
   if(steelDist < 2*steelStDev){
     return "Steel";
+  }
+
+  if (darkSteelDist < 2*darkSteelStDev){
+    return "Dark Steel";
   }
 
   return "No Material";
