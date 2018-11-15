@@ -55,8 +55,8 @@ void moveBackward(int speed, int speed2) {
 }
 void loop()
 {  
-  turnRight(250,125);
+  turnRight(250,100);
   delay(2000);
-  moveBackward(125,250);
+  moveBackward(100,250);
   delay(2000);
 }
