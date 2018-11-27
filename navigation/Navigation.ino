@@ -1,9 +1,7 @@
 #include "Enes100.h"
 
-#define abs(x) ((x)>0?(x):-(x))
-
 //Make sure to update the third argument with the number of the plate 
-Enes100 enes("TabascOSV", DEBRIS, 13, 2, 4);
+Enes100 enes("TabascOSV", DEBRIS, 7, 2, 4);
 
 boolean finished = false;
 
@@ -50,7 +48,7 @@ void loop() {
   while (!finished && millis() < timeCounter){
     
     //Moves forward until an object is detected or it reaches the endpoint
-    while (!obstacleDetected() && ((abs(enes.location.x - enes.destination.x) > 0.15) || (abs(enes.location.y - enes.destination.y) > 0.15))){
+    while (!obstacleDetected() && ((myAbs((enes.location.x - enes.destination.x),0.15)) || (myAbs((enes.location.y - enes.destination.y),0.15)) > 0.15)){
       moveForward(120);
       while (!enes.updateLocation());
       Serial.println("Updated location"); 
@@ -68,7 +66,7 @@ void loop() {
       deactivateMotors();
       Serial.println("Obstacle detected");
       goAround();
-    } else if ((abs(enes.location.x - enes.destination.x)) < 0.2 && (abs(enes.location.y - enes.destination.y)) < 0.2){
+    } else if (((myAbs(enes.location.x - enes.destination.x),0.2) && ((myAbs(enes.location.y - enes.destination.y),0.2)) < 0.2)){
       finished = true;
       Serial.println("Found endpoint.");
       deactivateMotors();
@@ -81,22 +79,21 @@ void loop() {
   }
   
 }
-
 //Turns motor1 backwards and motor2 forwards to turn left
-void turnLeft(int speed)
+void turnLeft(int sped)
 {
   digitalWrite(m1, HIGH);
-  analogWrite(e1, speed);
+  analogWrite(e1, sped);
   digitalWrite(m2, LOW);
-  analogWrite(e2, speed);
+  analogWrite(e2, sped);
 }
 //Turns motor1 forwards and motor2 backwards to turn right
-void turnRight(int speed)
+void turnRight(int sped)
 {
   digitalWrite(m1, LOW);
-  analogWrite(e1, speed);
+  analogWrite(e1, sped);
   digitalWrite(m2, HIGH);
-  analogWrite(e2, speed);
+  analogWrite(e2, sped);
 }
 //Stops both motors
 void deactivateMotors() {
@@ -104,18 +101,11 @@ void deactivateMotors() {
   analogWrite(e2, 0);
 }
 //Moves both motors forward at a specified speed
-void moveForward(int speed) {
+void moveForward(int sped) {
   digitalWrite(m1, HIGH);
-  analogWrite(e1, speed);
+  analogWrite(e1, sped);
   digitalWrite(m2, HIGH);
-  analogWrite(e2, speed);
-}
-//Moves both motors backwards at a specified speed
-void moveBackward(int speed) {
-  digitalWrite(m1, LOW);
-  analogWrite(e1, speed);
-  digitalWrite(m2, LOW);
-  analogWrite(e2, speed);
+  analogWrite(e2, sped);
 }
 
 /* Reads distance sensors. 
@@ -155,7 +145,6 @@ boolean isRockyTerrain(){
   }
   return false;
 }
-
 double determineTheta(double x, double y, double x2, double y2){
   double theta = asin((y2-y)/(sqrt((y2-y)*(y2-y)+(x2-x)*(x2-x))));
   return theta;
@@ -177,12 +166,12 @@ void fixAngle(){
   while (!enes.updateLocation());
 
   //Turns until within 0.05 units of the correct angle
-  while (abs(enes.location.theta - determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y)) > 0.05) {
+  while (myAbs(enes.location.theta - determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y), 0.2)) {
 
     if (turnDirection == 0){ //Right
-      turnRight(80);  
+      turnRight(120);  
     } else if (turnDirection == 1){ //Left
-      turnLeft(80);
+      turnLeft(120);
     }
 
     while (!enes.updateLocation());
@@ -196,7 +185,6 @@ void goAround(){
   Serial.println("Going around obstacle");
   boolean avoided = false;
   deactivateMotors();
-  int stuckCounter = millis() + 5000;
   
   while (!avoided){
     deactivateMotors();
@@ -211,9 +199,9 @@ void goAround(){
     //Turns until there is no longer an obstacle in the OSV's path
     while (readDistanceSensor(1) <= 450 || readDistanceSensor(2) <= 450){
       if (turnDirection == 1){
-        turnRight(80);
+        turnRight(120);
       } else {
-        turnLeft(80);
+        turnLeft(120);
       }
     }
     //tank.turnOffMotors();  
@@ -232,4 +220,8 @@ void goAround(){
   }
   
   Serial.println("Finished going around obstacle");
+}
+boolean myAbs(double num, double range){
+  return (num > range) || (num < -1.0*range);
+  
 }
