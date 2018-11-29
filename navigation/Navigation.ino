@@ -102,6 +102,13 @@ void deactivateMotors() {
 }
 //Moves both motors forward at a specified speed
 void moveForward(int sped) {
+  digitalWrite(m1, LOW);
+  analogWrite(e1, sped);
+  digitalWrite(m2, LOW);
+  analogWrite(e2, sped);
+}
+//Moves both motors backwards at a specified speed
+void moveBackward(int sped) {
   digitalWrite(m1, HIGH);
   analogWrite(e1, sped);
   digitalWrite(m2, HIGH);
