@@ -1,7 +1,7 @@
 #include "Enes100.h"
 
 //Make sure to update the third argument with the number of the plate 
-Enes100 enes("TabascOSV", DEBRIS, 9, 2, 4);
+Enes100 enes("TabascOSV", DEBRIS, 25, 2, 4);
 
 boolean finished = false;
 
@@ -68,7 +68,7 @@ void loop() {
     while (!enes.updateLocation());
 
     // Checks for obstacles and endpoint
-    if ((readDistanceSensor(1) <= 500 || readDistanceSensor(2) <= 500) && !isRockyTerrain()){
+    if ((readDistanceSensor(1) <= 675 || readDistanceSensor(2) <= 925) && !isRockyTerrain()){
       deactivateMotors();
       enes.println("Obstacle detected.");
       goAround();
@@ -146,7 +146,7 @@ int readDistanceSensor(int d){
 
 boolean obstacleDetected(){
   if (isRockyTerrain()) return false;
-  if (readDistanceSensor(1) > 500 && readDistanceSensor(2) > 500){
+  if (readDistanceSensor(1) > 650 && readDistanceSensor(2) > 900){
     return false;
   }
   return true;
@@ -210,7 +210,7 @@ void goAround(){
     } 
 
     // Turns until there is no longer an obstacle in the OSV's path
-    while (readDistanceSensor(1) <= 550 || readDistanceSensor(2) <= 550){
+    while (readDistanceSensor(1) <= 700 || readDistanceSensor(2) <= 1000){
       if (turnDirection == 1){
         turnRight(120);
       } else {
