@@ -1,7 +1,7 @@
 #include "Enes100.h"
 
 //Make sure to update the third argument with the number of the plate 
-Enes100 enes("TabascOSV", DEBRIS, 7, 2, 4);
+Enes100 enes("TabascOSV", DEBRIS, 9, 2, 4);
 
 boolean finished = false;
 
@@ -41,45 +41,51 @@ void setup() {
 }
 
 void loop() {
-  //Turn to face objective
+  // Turn to face objective
   fixAngle();
 
   timeCounter = millis() + period;
   while (!finished && millis() < timeCounter){
     
-    //Moves forward until an object is detected or it reaches the endpoint
-    while (!obstacleDetected() && ((myAbs((enes.location.x - enes.destination.x),0.15)) || (myAbs((enes.location.y - enes.destination.y),0.15)) > 0.15)){
-      moveForward(120);
+    // Moves forward until an object is detected or it reaches the endpoint
+    moveForward(120);
+    while (!obstacleDetected() && ((myAbs(enes.location.x - enes.destination.x,0.15)) || (myAbs(enes.location.y - enes.destination.y,0.15)))){
       while (!enes.updateLocation());
-      Serial.println("Updated location"); 
+      enes.println("Updated location");
+      enes.print("Distance Sensor 1: "); 
+      enes.println(readDistanceSensor(1));
 
-      //Fixes the angle every two seconds
+      enes.print("Distance Sensor 2: ");
+      enes.println(readDistanceSensor(2));
+
+      // Fixes the angle every two seconds
       if(millis() > timeCounter){
-        Serial.println("PERIOD");
+        enes.println("PERIOD");
         break;
       }
     }
+    enes.println("Past initial loop, checking sensors/location");
     while (!enes.updateLocation());
 
-    //Checks for obstacles and endpoint
-    if ((readDistanceSensor(1) <= 350 || readDistanceSensor(2) <= 350) && !isRockyTerrain()){
+    // Checks for obstacles and endpoint
+    if ((readDistanceSensor(1) <= 500 || readDistanceSensor(2) <= 500) && !isRockyTerrain()){
       deactivateMotors();
-      Serial.println("Obstacle detected");
+      enes.println("Obstacle detected.");
       goAround();
-    } else if (((myAbs(enes.location.x - enes.destination.x),0.2) && ((myAbs(enes.location.y - enes.destination.y),0.2)) < 0.2)){
+    } else if (myAbs(enes.location.x - enes.destination.x,0.2) && (myAbs(enes.location.y - enes.destination.y,0.2))){
       finished = true;
-      Serial.println("Found endpoint.");
+      enes.println("Found endpoint.");
       deactivateMotors();
     }
   }
   
-  //Stops the program when finished
+  // Stops the program when finished
   if (finished){
     while(1);
   }
   
 }
-//Turns motor1 backwards and motor2 forwards to turn left
+// Turns motor1 backwards and motor2 forwards to turn left
 void turnLeft(int sped)
 {
   digitalWrite(m1, HIGH);
@@ -87,7 +93,7 @@ void turnLeft(int sped)
   digitalWrite(m2, LOW);
   analogWrite(e2, sped);
 }
-//Turns motor1 forwards and motor2 backwards to turn right
+// Turns motor1 forwards and motor2 backwards to turn right
 void turnRight(int sped)
 {
   digitalWrite(m1, LOW);
@@ -95,19 +101,19 @@ void turnRight(int sped)
   digitalWrite(m2, HIGH);
   analogWrite(e2, sped);
 }
-//Stops both motors
+// Stops both motors
 void deactivateMotors() {
   analogWrite(e1, 0);
   analogWrite(e2, 0);
 }
-//Moves both motors forward at a specified speed
+// Moves both motors forward at a specified speed
 void moveForward(int sped) {
   digitalWrite(m1, LOW);
   analogWrite(e1, sped);
   digitalWrite(m2, LOW);
   analogWrite(e2, sped);
 }
-//Moves both motors backwards at a specified speed
+// Moves both motors backwards at a specified speed
 void moveBackward(int sped) {
   digitalWrite(m1, HIGH);
   analogWrite(e1, sped);
@@ -140,7 +146,7 @@ int readDistanceSensor(int d){
 
 boolean obstacleDetected(){
   if (isRockyTerrain()) return false;
-  if (readDistanceSensor(1) > 300 && readDistanceSensor(2) > 300){
+  if (readDistanceSensor(1) > 500 && readDistanceSensor(2) > 500){
     return false;
   }
   return true;
@@ -157,10 +163,10 @@ double determineTheta(double x, double y, double x2, double y2){
   return theta;
 }
 
-//Fixes the OSV heading to face the objective
+// Fixes the OSV heading to face the objective
 void fixAngle(){
 
-  Serial.println("Fixing angle");
+  enes.println("Fixing angle");
   
   // Direction to turn. 0 = Right, 1 = Left
   int turnDirection = 0;
@@ -172,7 +178,7 @@ void fixAngle(){
   }
   while (!enes.updateLocation());
 
-  //Turns until within 0.05 units of the correct angle
+  // Turns until within 0.2 units of the correct angle
   while (myAbs(enes.location.theta - determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y), 0.2)) {
 
     if (turnDirection == 0){ //Right
@@ -184,12 +190,12 @@ void fixAngle(){
     while (!enes.updateLocation());
     
   }
-  Serial.println("Angle fixed");
+  enes.println("Angle fixed");
 }
 
-//Obstacle avoidance algorithm
+// Obstacle avoidance algorithm
 void goAround(){
-  Serial.println("Going around obstacle");
+  enes.println("Going around obstacle");
   boolean avoided = false;
   deactivateMotors();
   
@@ -203,8 +209,8 @@ void goAround(){
       turnDirection = 1;
     } 
 
-    //Turns until there is no longer an obstacle in the OSV's path
-    while (readDistanceSensor(1) <= 450 || readDistanceSensor(2) <= 450){
+    // Turns until there is no longer an obstacle in the OSV's path
+    while (readDistanceSensor(1) <= 550 || readDistanceSensor(2) <= 550){
       if (turnDirection == 1){
         turnRight(120);
       } else {
@@ -226,9 +232,8 @@ void goAround(){
     }
   }
   
-  Serial.println("Finished going around obstacle");
+  enes.println("Finished going around obstacle");
 }
 boolean myAbs(double num, double range){
   return (num > range) || (num < -1.0*range);
-  
 }
