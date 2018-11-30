@@ -3,10 +3,12 @@
 //Make sure to update the third argument with the number of the plate 
 Enes100 enes("TabascOSV", DEBRIS, 25, 2, 4);
 
-boolean finished = false;
+boolean finishedNavigating = false;
 
 int period = 2000;
 int timeCounter;
+
+int timePassedCounter;
 
 //enA and enB pins are PWM output pins
 //in1, in2, in3, and in4 pins are digital outputs
@@ -37,6 +39,7 @@ void setup() {
   while (!enes.updateLocation());
 
   timeCounter = millis() + period;
+  timePassedCounter = millis() + (period*4);
 
 }
 
@@ -45,7 +48,7 @@ void loop() {
   fixAngle();
 
   timeCounter = millis() + period;
-  while (!finished && millis() < timeCounter){
+  while (!finishedNavigating && millis() < timeCounter){
     
     // Moves forward until an object is detected or it reaches the endpoint
     moveForward(120);
@@ -68,19 +71,19 @@ void loop() {
     while (!enes.updateLocation());
 
     // Checks for obstacles and endpoint
-    if ((readDistanceSensor(1) <= 675 || readDistanceSensor(2) <= 925) && !isRockyTerrain()){
+    if ((readDistanceSensor(1) <= 650 || readDistanceSensor(2) <= 900) && !isRockyTerrain()){
       deactivateMotors();
       enes.println("Obstacle detected.");
       goAround();
-    } else if (myAbs(enes.location.x - enes.destination.x,0.2) && (myAbs(enes.location.y - enes.destination.y,0.2))){
-      finished = true;
+    } else if (myAbs(enes.location.x - enes.destination.x,0.15) && (myAbs(enes.location.y - enes.destination.y,0.15)) && !isRockyTerrain() && timePassed()){
+      finishedNavigating = true;
       enes.println("Found endpoint.");
       deactivateMotors();
     }
   }
   
   // Stops the program when finished
-  if (finished){
+  if (finishedNavigating){
     while(1);
   }
   
@@ -210,7 +213,7 @@ void goAround(){
     } 
 
     // Turns until there is no longer an obstacle in the OSV's path
-    while (readDistanceSensor(1) <= 700 || readDistanceSensor(2) <= 1000){
+    while (readDistanceSensor(1) <= 675 || readDistanceSensor(2) <= 925){
       if (turnDirection == 1){
         turnRight(120);
       } else {
@@ -219,7 +222,7 @@ void goAround(){
     }
     //tank.turnOffMotors();  
 
-    timeCounter = millis() + 3000;
+    timeCounter = millis() + 2000;
     while (millis() < timeCounter){
       moveForward(120);
     }
@@ -236,4 +239,7 @@ void goAround(){
 }
 boolean myAbs(double num, double range){
   return (num > range) || (num < -1.0*range);
+}
+boolean timePassed(){
+  return (timePassedCounter < millis());
 }
