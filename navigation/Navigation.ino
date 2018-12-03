@@ -71,7 +71,7 @@ void loop() {
     while (!enes.updateLocation());
 
     // Checks for obstacles and endpoint
-    if ((readDistanceSensor(1) <= 650 || readDistanceSensor(2) <= 900) && !isRockyTerrain()){
+    if ((readDistanceSensor(1) <= 375 || readDistanceSensor(2) <= 620) && !isRockyTerrain() && !facingMaterial){
       deactivateMotors();
       enes.println("Obstacle detected.");
       goAround();
@@ -149,14 +149,24 @@ int readDistanceSensor(int d){
 
 boolean obstacleDetected(){
   if (isRockyTerrain()) return false;
-  if (readDistanceSensor(1) > 650 && readDistanceSensor(2) > 900){
+  if (readDistanceSensor(1) > 375 && readDistanceSensor(2) > 620){
     return false;
   }
   return true;
 }
-
 boolean isRockyTerrain(){
   if (enes.location.x <= 1.25){
+    return true;
+  }
+  return false;
+}
+
+//Distance sensors can see the material, so this should prevent the OSV from seeing it as an obstacle
+boolean facingMaterial(){
+  while (!enes.updateLocation());
+  double angle = determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y);
+  
+  if (enes.location.x >= 2.25 && enes.location.y <= 1.0 && myAbs(enes.location.theta - angle, 0.2)){
     return true;
   }
   return false;
@@ -213,7 +223,7 @@ void goAround(){
     } 
 
     // Turns until there is no longer an obstacle in the OSV's path
-    while (readDistanceSensor(1) <= 675 || readDistanceSensor(2) <= 925){
+    while (readDistanceSensor(1) <= 400 || readDistanceSensor(2) <= 650){
       if (turnDirection == 1){
         turnRight(120);
       } else {
