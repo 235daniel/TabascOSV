@@ -369,10 +369,12 @@ void readColorSensor(){
     enes.baseObjective(COPPER);
     finishedMission = true;
     deactivateMotors();
+    enes.endMission();
   } else if (material == "Steel"){
     enes.baseObjective(STEEL);
     finishedMission = true;
     deactivateMotors();
+    enes.endMission();
   }
 }
 void identifyMaterial(){
