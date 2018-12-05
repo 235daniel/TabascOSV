@@ -368,6 +368,7 @@ void readColorSensor(){
   if (material == "Copper"){
     enes.baseObjective(COPPER);
     finishedMission = true;
+    deactivateMotors();
   } else if (material == "Steel"){
     enes.baseObjective(STEEL);
     finishedMission = true;
