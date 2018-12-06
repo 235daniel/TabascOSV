@@ -77,12 +77,12 @@ void loop() {
     enes.println("Past initial loop, checking sensors/location");
     while (!enes.updateLocation());
 
-    // Checks for obstacles and endpoint. Obstacle detection is ignored if the OSV is in the rocky terrain.
+    // Checks for obstacles and endpoint. Obstacle detection is ignored if the OSV is in the rocky terrain
     if (obstacleDetected() && !isRockyTerrain() && !facingMaterial()){
       deactivateMotors();
       enes.println("Obstacle detected.");
       
-      // Moves backwards a small distance, since the sensors don't detect the obstacle until the OSV is very close to it.
+      // Moves backwards a small distance, since the sensors don't detect the obstacle until the OSV is very close to it
       moveBackward(100);
       delay(800);
       deactivateMotors();
@@ -159,7 +159,7 @@ void moveBackward(int sped) {
 /* Reads distance sensors. 
  * Each unit is worth approximately 5mm
  * The distance sensors are accurate to their farthest measurement (1024)
- * The distance sensors are accurate close range to the measurement 57.
+ * The distance sensors are accurate close range to the measurement 57
  * This is about 250mm
  * The closer the object is to the sensor, the more inaccurate the measurement is
 */
@@ -200,7 +200,7 @@ boolean isRockyTerrain(){
   return false;
 }
 
-// Checks if the OSV is facing the material so that the OSV does not try to avoid it. 
+// Checks if the OSV is facing the material so that the OSV does not try to avoid it
 boolean facingMaterial(){
   while (!enes.updateLocation());
   double angle = determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y);
@@ -301,12 +301,12 @@ void goAround(){
   enes.println("Finished going around obstacle");
 }
 
-// Custom absolute value function since the default abs() function is not able to return a double.
+// Custom absolute value function since the default abs() function is not able to return a double
 boolean myAbs(double num, double range){
   return (num < range) && (num > -1.0*range);
 }
 
-// Cheks if the destination is in the bottom (4th) quadrant or not.
+// Cheks if the destination is in the bottom (4th) quadrant or not
 boolean bottomQuadrant(){
   if (enes.destination.y > 1.0){
     return false;
@@ -338,7 +338,7 @@ String getMaterialType(int r, int g, int b){
   return "No Material";
 }
 
-// Reads the color sensor and ends the mission if copper or steel is detected.
+// Reads the color sensor and ends the mission if copper or steel is detected
 void readColorSensor(){
   enes.println("Reading color sensor..");
   uint16_t clear, red, green, blue;
