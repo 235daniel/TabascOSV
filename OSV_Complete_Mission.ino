@@ -38,7 +38,7 @@ void setup() {
   pinMode(M1, OUTPUT);
   pinMode(M2, OUTPUT);
 
-  if (!tcs.begin()){
+  if (!tcs.begin()) {
     enes.println("ERROR: Did not find color sensor");
     while(1);
   }
@@ -59,16 +59,16 @@ void loop() {
   fixAngle();
 
   timeCounter = millis() + PERIOD;
-  while (!finishedNavigating && millis() < timeCounter){
+  while (!finishedNavigating && millis() < timeCounter) {
     
     // Moves forward until an object is detected or it reaches the endpoint
     moveForward(100);
     
-    while (!obstacleDetected() && ((!myAbs(enes.location.x - enes.destination.x,0.275)) || (!myAbs(enes.location.y - enes.destination.y,0.275)))){
+    while (!obstacleDetected() && ((!myAbs(enes.location.x - enes.destination.x,0.275)) || (!myAbs(enes.location.y - enes.destination.y,0.275)))) {
       while (!enes.updateLocation());
 
       // Fixes the angle every two seconds
-      if(millis() > timeCounter){
+      if (millis() > timeCounter) {
         enes.println("Counter has ended, attempting to fix the angle");
         break;
       }      
@@ -78,7 +78,7 @@ void loop() {
     while (!enes.updateLocation());
 
     // Checks for obstacles and endpoint. Obstacle detection is ignored if the OSV is in the rocky terrain
-    if (obstacleDetected() && !isRockyTerrain() && !facingMaterial()){
+    if (obstacleDetected() && !isRockyTerrain() && !facingMaterial()) {
       deactivateMotors();
       enes.println("Obstacle detected.");
       
@@ -88,7 +88,7 @@ void loop() {
       deactivateMotors();
       goAround();
       
-    } else if (myAbs(enes.location.x - enes.destination.x,0.275) && (myAbs(enes.location.y - enes.destination.y,0.275)) && !isRockyTerrain()){
+    } else if (myAbs(enes.location.x - enes.destination.x,0.275) && (myAbs(enes.location.y - enes.destination.y,0.275)) && !isRockyTerrain()) {
       finishedNavigating = true;
       enes.println("Found endpoint.");
       enes.navigated(); 
@@ -97,11 +97,11 @@ void loop() {
   }
 
   // Checks the color sensor when finished navigating
-  if (finishedNavigating){
+  if (finishedNavigating) {
     fixAngle();
     
     // Moves a small distance forward if not close enough to the material
-    if (readDistanceSensor(1) >= 450 && readDistanceSensor(2) >= 700 && facingMaterial()){
+    if (readDistanceSensor(1) >= 450 && readDistanceSensor(2) >= 700 && facingMaterial()) {
       timeCounter = millis() + 100;
       moveForward(100);
       while (readDistanceSensor(1) >= 450 && readDistanceSensor(2) >= 700 && facingMaterial() && timeCounter > millis());
@@ -111,7 +111,7 @@ void loop() {
   }
   
   // Stops the program when finished
-  if (finishedMission){
+  if (finishedMission) {
     enes.endMission();
     deactivateMotors();
     while(1);
@@ -119,33 +119,33 @@ void loop() {
 }
 
 // Turns motor1 backwards and motor2 forwards to turn left
-void turnLeft(int sped){
+void turnLeft(int sped) {
   digitalWrite(M1, HIGH);
   analogWrite(E1, sped);
   digitalWrite(M2, LOW);
   analogWrite(E2, sped);
 }
 // Turns motor1 forwards and motor2 backwards to turn right
-void turnRight(int sped){
+void turnRight(int sped) {
   digitalWrite(M1, LOW);
   analogWrite(E1, sped);
   digitalWrite(M2, HIGH);
   analogWrite(E2, sped);
 }
 // Stops both motors
-void deactivateMotors(){
+void deactivateMotors() {
   analogWrite(E1, 0);
   analogWrite(E2, 0);
 }
 // Moves both motors forward at a specified speed
-void moveForward(int sped){
+void moveForward(int sped) {
   digitalWrite(M1, LOW);
   analogWrite(E1, sped);
   digitalWrite(M2, LOW);
   analogWrite(E2, sped);
 }
 // Moves both motors backwards at a specified speed
-void moveBackward(int sped){
+void moveBackward(int sped) {
   digitalWrite(M1, HIGH);
   analogWrite(E1, sped);
   digitalWrite(M2, HIGH);
@@ -153,28 +153,28 @@ void moveBackward(int sped){
 }
 
 // Obstacle avoidance algorithm
-void goAround(){
+void goAround() {
   enes.println("Going around obstacle");
   boolean avoided = false;
   
-  while (!avoided){
+  while (!avoided) {
     deactivateMotors();
     
     // Calculates the direction to turn to avoid hitting the boundaries. 0 = left, 1 = right
     int turnDirection = 0;
     while (!enes.updateLocation());
-    if (enes.location.y >= 1){
+    if (enes.location.y >= 1) {
       turnDirection = 1;
     } 
 
     // Turns until there is no longer an obstacle in the OSV's path
-    while (readDistanceSensor(1) <= 450 || readDistanceSensor(2) <= 700){
+    while (readDistanceSensor(1) <= 450 || readDistanceSensor(2) <= 700) {
       enes.print("Distance Sensor 1: "); 
       enes.println(readDistanceSensor(1));
 
       enes.print("Distance Sensor 2: ");
       enes.println(readDistanceSensor(2));
-      if (turnDirection == 1){
+      if (turnDirection == 1) {
         turnRight(120);
       } else {
         turnLeft(120);
@@ -183,7 +183,7 @@ void goAround(){
 
     // After finding a clear path, moves for a short amount of time
     timeCounter = millis() + 2000;
-    while (millis() < timeCounter && !obstacleDetected()){
+    while (millis() < timeCounter && !obstacleDetected()) {
       moveForward(100);
     }
 
@@ -193,7 +193,7 @@ void goAround(){
     fixAngle();
     
     // If an obstacle is still in the way, it will try again
-    if (!obstacleDetected()){
+    if (!obstacleDetected()) {
       avoided = true;
     }
   }
@@ -202,14 +202,14 @@ void goAround(){
 }
 
 // Checks distance sensors to determine if there is an obstacle. 
-boolean obstacleDetected(){
+boolean obstacleDetected() {
   
   // Ignores sensors if the OSV is in the rocky terrain
-  if (isRockyTerrain()){
+  if (isRockyTerrain()) {
     return false;
   }
   
-  if (readDistanceSensor(1) > 450 && readDistanceSensor(2) > 700){
+  if (readDistanceSensor(1) > 450 && readDistanceSensor(2) > 700) {
     return false;
   }
   return true;
@@ -222,14 +222,14 @@ boolean obstacleDetected(){
  * This is about 250mm
  * The closer the object is to the sensor, the more inaccurate the measurement is
 */
-int readDistanceSensor(int d){
+int readDistanceSensor(int d) {
   int distance1, distance2;
-  if(d == 1){
+  if (d == 1) {
     // Reads from the called sensor, and then converts the measurement into millimeters
     distance1 = analogRead(A0) * 5;
     return distance1;
   }
-  if(d == 2){
+  if (d == 2) {
     // Reads from the called sensor, and then converts the measurement into millimeters
     distance2 = analogRead(A1) * 5;
     return distance2;
@@ -237,16 +237,16 @@ int readDistanceSensor(int d){
 }
 
 // Checks if the OSV is in the rocky terrain, which ends at the x value 1.25
-boolean isRockyTerrain(){
+boolean isRockyTerrain() {
   while (!enes.updateLocation());
-  if (enes.location.x <= 1.25){
+  if (enes.location.x <= 1.25) {
     return true;
   }
   return false;
 }
 
 // Fixes the OSV heading to face the objective
-void fixAngle(){
+void fixAngle() {
 
   enes.println("Fixing angle");
   
@@ -255,7 +255,7 @@ void fixAngle(){
   while (!enes.updateLocation());
   double angle = determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y);
   
-  if (enes.location.theta - angle <= 0){
+  if (enes.location.theta - angle <= 0) {
     turnDirection = 1;
   }
   
@@ -264,9 +264,9 @@ void fixAngle(){
   // Turns until within 0.2 units of the correct angle
   while (!myAbs(enes.location.theta - determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y), 0.2)) {
 
-    if (turnDirection == 0){ //Right
+    if (turnDirection == 0) { //Right
       turnRight(120);  
-    } else if (turnDirection == 1){ //Left
+    } else if (turnDirection == 1) { //Left
       turnLeft(120);
     }
 
@@ -277,22 +277,22 @@ void fixAngle(){
 }
 
 // Determines the angle that the OSV needs to turn to 
-double determineTheta(double x, double y, double x2, double y2){
+double determineTheta(double x, double y, double x2, double y2) {
   double theta = asin((y2-y)/(sqrt((y2-y)*(y2-y)+(x2-x)*(x2-x))));
   return theta;
 }
 
 // Custom absolute value function since the default abs() function is not able to return a double
-boolean myAbs(double num, double range){
+boolean myAbs(double num, double range) {
   return (num < range) && (num > -1.0*range);
 }
 
 // Checks if the OSV is facing the material so that the OSV does not try to avoid it
-boolean facingMaterial(){
+boolean facingMaterial() {
   while (!enes.updateLocation());
   double angle = determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y);
-  if (bottomQuadrant()){
-    if (enes.location.x >= 2.15 && enes.location.y <= 1.0 && myAbs(enes.location.theta - angle, 0.2)){
+  if (bottomQuadrant()) {
+    if (enes.location.x >= 2.15 && enes.location.y <= 1.0 && myAbs(enes.location.theta - angle, 0.2)) {
       return true;
     }
   } else if (enes.location.x >= 2.15 && enes.location.y > 1.0 && myAbs(enes.location.theta - angle, 0.2)) {
@@ -303,22 +303,22 @@ boolean facingMaterial(){
 }
 
 // Checks if the destination is in the bottom (4th) quadrant or not
-boolean bottomQuadrant(){
-  if (enes.destination.y > 1.0){
+boolean bottomQuadrant() {
+  if (enes.destination.y > 1.0) {
     return false;
   }
   return true;
 }
 
 // Algorithm for measuring and transmitting the type of material
-void identifyMaterial(){
+void identifyMaterial() {
  
   // Calculates the most efficient turn direction
   int turnDirection = 0;
   while (!enes.updateLocation());
   double angle = determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y);
   
-  if (enes.location.theta - angle <= 0){
+  if (enes.location.theta - angle <= 0) {
     turnDirection = 1;
   }
   while (!enes.updateLocation());
@@ -326,9 +326,9 @@ void identifyMaterial(){
   // Turns until within 0.15 units of the correct angle towards the material
   while (!myAbs(enes.location.theta - determineTheta(enes.location.x, enes.location.y, enes.destination.x, enes.destination.y), 0.15) && !finishedMission) {
 
-    if (turnDirection == 0){ //Right
+    if (turnDirection == 0) { //Right
       turnRight(120);  
-    } else if (turnDirection == 1){ //Left
+    } else if (turnDirection == 1) { //Left
       turnLeft(120);
     }
 
@@ -339,13 +339,13 @@ void identifyMaterial(){
     
   }
   // Tries again if the color sensor did not detect copper or steel and end the mission
-  if (!finishedMission){
+  if (!finishedMission) {
     identifyMaterial();
   }
 }
 
 // Reads the color sensor and ends the mission if copper or steel is detected
-void readColorSensor(){
+void readColorSensor() {
   enes.println("Reading color sensor..");
   uint16_t clear, red, green, blue;
   tcs.setInterrupt(false); // Turn on LED
@@ -366,12 +366,12 @@ void readColorSensor(){
   
   String material = getMaterialType((int)r, (int)g, (int)b);
 
-  if (material == "Copper"){
+  if (material == "Copper") {
     enes.baseObjective(COPPER);
     finishedMission = true;
     deactivateMotors();
     enes.endMission();
-  } else if (material == "Steel"){
+  } else if (material == "Steel") {
     enes.baseObjective(STEEL);
     finishedMission = true;
     deactivateMotors();
@@ -380,23 +380,23 @@ void readColorSensor(){
 }
 
 // Calculates the material type based on the r, g, and b values using the distance formula 
-String getMaterialType(int r, int g, int b){
+String getMaterialType(int r, int g, int b) {
   double copperDist = sqrt(pow(COPPER_AVG[0] - r, 2) + pow(COPPER_AVG[1] - g, 2) + pow(COPPER_AVG[2] - b, 2));
   double steelDist = sqrt(pow(STEEL_AVG[0] - r, 2) + pow(STEEL_AVG[1] - g, 2) + pow(STEEL_AVG[2] - b, 2));
   double darkSteelDist = sqrt(pow(DARK_STEEL_AVG[0] - r, 2) + pow(DARK_STEEL_AVG[1] - g, 2) + pow(DARK_STEEL_AVG[2] - b, 2));
 
-  if(copperDist < steelDist && copperDist < darkSteelDist){
-    if(copperDist < 2*COPPER_STDEV){
+  if (copperDist < steelDist && copperDist < darkSteelDist) {
+    if (copperDist < 2*COPPER_STDEV) {
       return "Copper";
     }
     return "No Material";
   }
 
-  if(steelDist < 2*STEEL_STDEV){
+  if (steelDist < 2*STEEL_STDEV) {
     return "Steel";
   }
   
-  if (darkSteelDist < 2*DARK_STEEL_STDEV){
+  if (darkSteelDist < 2*DARK_STEEL_STDEV) {
     return "Steel";
   }
 
