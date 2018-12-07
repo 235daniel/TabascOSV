@@ -76,12 +76,12 @@ void loop() {
     enes.println("Past initial loop, checking sensors/location");
     while (!enes.updateLocation());
 
-    // Checks for obstacles and endpoint. Obstacle detection is ignored if the OSV is in the rocky terrain
+    // Checks for obstacles and endpoint. Obstacle detection is ignored in the rocky terrain
     if (obstacleDetected() && !isRockyTerrain() && !facingMaterial()) {
       deactivateMotors();
       enes.println("Obstacle detected.");
       
-      // Moves backwards a small distance, since the sensors don't detect the obstacle until the OSV is very close to it
+      // Moves backwards a small distance, since the sensors don't detect the obstacle until the OSV is close to it
       moveBackward(100);
       delay(800);
       deactivateMotors();
