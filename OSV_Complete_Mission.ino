@@ -2,7 +2,6 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 
-//Make sure to update the third argument with the number of the plate 
 Enes100 enes("TabascOSV", DEBRIS, 25, 2, 4);
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
