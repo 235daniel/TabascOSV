@@ -306,7 +306,7 @@ boolean myAbs(double num, double range){
   return (num < range) && (num > -1.0*range);
 }
 
-// Cheks if the destination is in the bottom (4th) quadrant or not
+// Checks if the destination is in the bottom (4th) quadrant or not
 boolean bottomQuadrant(){
   if (enes.destination.y > 1.0){
     return false;
