@@ -169,11 +169,7 @@ void goAround() {
 
     // Turns until there is no longer an obstacle in the OSV's path
     while (readDistanceSensor(1) <= 450 || readDistanceSensor(2) <= 700) {
-      enes.print("Distance Sensor 1: "); 
-      enes.println(readDistanceSensor(1));
-
-      enes.print("Distance Sensor 2: ");
-      enes.println(readDistanceSensor(2));
+      
       if (turnDirection == 1) {
         turnRight(120);
       } else {
@@ -298,7 +294,6 @@ boolean facingMaterial() {
   } else if (enes.location.x >= 2.15 && enes.location.y > 1.0 && myAbs(enes.location.theta - angle, 0.2)) {
     return true;
   }
-  enes.println("Is not facing material");
   return false;
 }
 
